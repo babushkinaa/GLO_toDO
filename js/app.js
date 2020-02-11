@@ -4,9 +4,7 @@ let todoControl = document.querySelector('.todo-control'),
     headerInput = document.querySelector('.header-input'),
     headerBotton = document.querySelector('.header-button'),
     container = document.querySelector('.container'),
-    // todo = document.getElementById('todo'),
     todo = document.getElementById('todo'),
-    // todo = document.querySelector('#todo'),
     todoItem = document.querySelectorAll('.todo-item'),
     todoComplet = document.getElementById('completed'),
     
@@ -25,24 +23,58 @@ let todoControl = document.querySelector('.todo-control'),
     hidenElement = function(){
         todo.querySelector('.todo-item').style.display = 'none';
         todoComplet.querySelector('.todo-item').style.display = 'none';
+        lsNewJob = localStorage.getItem('newJob').split(',');
+        lsCompleteJob = localStorage.getItem('complectJob').split(',');
+        console.log('lsNewJob: ', lsNewJob);
+        if (lsNewJob) {
+            for (const key in lsNewJob) {
+                if (lsNewJob.hasOwnProperty(key)) {
+                    const element = lsNewJob[key];
+                    let item = itemNewJob.cloneNode(true);
+                    console.log('item: ', item);
+                    let itemBtn = itemNewJob.querySelector('.todo-buttons').cloneNode(true);
+                    itemBtn.querySelector('.todo-complete').addEventListener('click', eventAdd); //событие на кнопку lj добавить в список
+                    itemBtn.querySelector('.todo-remove').addEventListener('click',deleteJob);
+                    item.textContent = element;
+                    item.appendChild(itemBtn); // вставляем кнопки
+                    todo.appendChild(item); 
+                }
+            }
+        }
+        if (lsCompleteJob) {
+
+            for (const key in lsNewJob) {
+                if (lsCompleteJob.hasOwnProperty(key)) {
+                    const element = lsCompleteJob[key];
+                    let item = itemCompletJob.cloneNode(true);
+                    console.log('item: ', item);
+                    let itemBtn = itemCompletJob.querySelector('.todo-buttons').cloneNode(true);
+                    itemBtn.querySelector('.todo-complete').addEventListener('click', eventReturnNewJob); //событие на кнопку lj добавить в список
+                    itemBtn.querySelector('.todo-remove').addEventListener('click',deleteJob);
+                    item.textContent = element;
+                    item.appendChild(itemBtn); // добавляем в li кнопки с новыми событиями
+                    todoComplet.appendChild(item); 
+                }
+            }
+
+            
+        }
     }
-    hidenElement();
 
     // добавляем новую задачу со строки
 
     addNewJobList = function(){
         console.log(event);
         let item = itemNewJob.cloneNode(true); // получаем li  из newJob
-        // let item = todo.querySelector('.todo-item').cloneNode(true); // получаем li  из newJob
         let itemBtn = item.querySelector('.todo-buttons').cloneNode(true); // получаем кнопки из li
         itemBtn.querySelector('.todo-complete').addEventListener('click',eventAdd); //событие на кнопку lj добавить в список
         itemBtn.querySelector('.todo-remove').addEventListener('click',deleteJob); // событие удалить
         item.textContent = document.querySelector('.header-input').value.trim(); // присваиваем значение новому li
         newJob.push(item.textContent.trim());
         localStorage.setItem('newJob',newJob);
-        // item.style.visibility = 'visible';
         item.appendChild(itemBtn); // вставляем кнопки
         todo.appendChild(item); //  вставляем элемент в список
+        document.querySelector('.header-input').value = '';
         console.log(newJob);
 
     }
@@ -51,13 +83,10 @@ let todoControl = document.querySelector('.todo-control'),
 
     addNewJobListComplet = function(){
         let itemValue = event.target.parentElement.parentElement; // получаем значение из введенной строки
-        // let item = itemCompletJob; // получаем новый li
         let item = itemCompletJob.cloneNode(true); // получаем новый li
         console.log('item: ', item);
-        // let item = todoComplet.querySelector('.todo-item').cloneNode(true); // получаем новый li
         let itemBtn = item.querySelector('.todo-buttons').cloneNode(true);// получаем кнопки из li
         let itemJob = itemValue.textContent.trim(); // сохраняем значение 
-        // let itemJob = itemValue.textContent.trim(); // сохраняем значение 
         itemBtn.querySelector('.todo-remove').addEventListener('click',eventRemov); // добавляем событие удалить
         itemBtn.querySelector('.todo-complete').addEventListener('click',eventReturnNewJob); // добавляем событие переместить в jobComplet
         item.textContent = itemJob; // присваиваем значение 
@@ -76,7 +105,6 @@ let todoControl = document.querySelector('.todo-control'),
         console.log('newJob: ', newJob);
         localStorage.setItem('newJob',newJob); // записываем в ls новый массив
         localStorage.setItem('complectJob',complectJob); // записываем в ls новый массив выполненных работ
-        // item.style.visibility = 'visible';
         item.appendChild(itemBtn); // добавляем в li кнопки с новыми событиями
         todoComplet.appendChild(item); // вставляем элемент
         itemValue.remove(); // удаляем выбранный элемент
@@ -87,11 +115,9 @@ let todoControl = document.querySelector('.todo-control'),
         let itemValue = event.target.parentElement.parentElement;
         console.log('itemValue: ', itemValue);
         let item = itemCompletJob.cloneNode(true);
-        // let item = todoComplet.querySelector('.todo-item').cloneNode(true);
         let itemBtn = item.querySelector('.todo-buttons').cloneNode(true);
         let itemJob = itemValue.textContent.trim();
         itemBtn.querySelector('.todo-remove').addEventListener('click',eventRemov);
-        // itemBtn.querySelector('.todo-complete').addEventListener('click',eventReturnNewJob);
         itemBtn.querySelector('.todo-complete').addEventListener('click',eventAdd);
         newJob.push(itemJob);
         tmpArr = [];
@@ -177,3 +203,4 @@ addArrItem = function(arr, item){
     tmpArr = arr;
         arr.push(item);
 }
+hidenElement();
